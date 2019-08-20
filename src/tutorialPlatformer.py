@@ -1,3 +1,5 @@
+from datetime import datetime
+
 import arcade
 
 # Constants
@@ -89,6 +91,10 @@ class MyGame(arcade.Window):
 
         self.collect_coin_sound = arcade.load_sound(f"{RESOURCES_ROOT}/sounds/coin1.wav")
         self.jump_sound = arcade.load_sound(f"{RESOURCES_ROOT}/sounds/jump1.wav")
+
+        self.message_shown = 0
+        self.messages = ["message one", "here is message two", "oh hey, it's message three"]
+        self.last_rotation = datetime.timestamp(datetime.now())
 
         arcade.set_background_color(arcade.csscolor.CORNFLOWER_BLUE)
 
@@ -190,6 +196,14 @@ class MyGame(arcade.Window):
         score_text = f"Score: {self.score}"
         arcade.draw_text(score_text, 10 + self.view_left, 10 + self.view_bottom,
                          arcade.csscolor.WHITE, 18)
+
+        now = datetime.timestamp(datetime.now())
+        time_since_last_rotation = now - self.last_rotation
+        if time_since_last_rotation > 3:
+            self.last_rotation = now
+            self.message_shown = (self.message_shown + 1) % len(self.messages)
+        arcade.draw_text(self.messages[self.message_shown], 10 + self.view_left, 300 + self.view_bottom,
+                         arcade.csscolor.WHITE, 64)
 
     def on_key_press(self, key, modifiers):
         if key == arcade.key.UP or key == arcade.key.W:
